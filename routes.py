@@ -11,39 +11,42 @@ def index():
 def new():
     return render_template("new.html")
 
-@app.route("/send", methods=["post"])
+@app.route("/send", methods=["POST"])
 def send():
     content = request.form["content"]
     if messages.send(content):
         return redirect("/")
     else:
-        return render_template("error.html",message="Viestin lähetys ei onnistunut")
+        return render_template("error.html", message="Viestin lähetys ei onnistunut")
 
-@app.route("/login", methods=["get","post"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if users.login(username,password):
+        if users.login(username, password):
             return redirect("/")
         else:
-            return render_template("error.html",message="Väärä tunnus tai salasana")
+            return render_template("error.html", message="Väärä tunnus tai salasana")
 
 @app.route("/logout")
 def logout():
     users.logout()
     return redirect("/")
 
-@app.route("/register", methods=["get","post"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
         username = request.form["username"]
-        password = request.form["password"]
-        if users.register(username,password):
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
+        if password1 != password2:
+            return render_template("error.html", message="Salasanat eroavat")
+        if users.register(username, password1):
             return redirect("/")
         else:
-            return render_template("error.html",message="Rekisteröinti ei onnistunut")
+            return render_template("error.html", message="Rekisteröinti ei onnistunut")
